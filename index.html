@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Daily Routine</title>
+<style>
+body{font-family:Arial,sans-serif;background:#fff7fb;color:#39313a;margin:0;padding:18px}
+h1{text-align:center;color:#bd78a2}
+h2{color:#a65e89}
+h3{margin-bottom:8px}
+.card{background:white;border-radius:15px;padding:15px;margin:14px 0;box-shadow:0 2px 8px #eadde5}
+.tabs{display:flex;gap:7px;flex-wrap:wrap;justify-content:center}
+button{background:#e9c8dc;border:0;border-radius:10px;padding:10px 13px;font-size:15px}
+button.active{background:#bd78a2;color:white}
+label{display:block;padding:9px 2px;border-bottom:1px solid #f0e8ed}
+input[type=checkbox]{width:19px;height:19px;vertical-align:middle;margin-right:9px;accent-color:#bd78a2}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{border:1px solid #eadde5;padding:7px 3px;text-align:center}
+th{background:#f8eaf2}
+td:first-child,th:first-child{text-align:left;font-weight:bold}
+table input{width:18px;height:18px}
+.page{display:none}
+.page.active{display:block}
+.small{font-size:13px;color:#776b74}
+</style>
+</head>
+<body>
+<h1>My Daily Routine 🌸</h1>
+
+<div class="tabs">
+<button class="active" onclick="showPage('daily',this)">Daily</button>
+<button onclick="showPage('chores',this)">Chores</button>
+<button onclick="showPage('weekly',this)">Weekly</button>
+<button onclick="showPage('core',this)">Core</button>
+</div>
+
+<section id="daily" class="page active">
+<div class="card">
+<h2>🌅 Morning routine</h2>
+<p class="small">School mornings</p>
+<div id="morning"></div>
+</div>
+<div class="card">
+<h2>🏡 After school</h2>
+<div id="afternoon"></div>
+</div>
+<div class="card">
+<h2>🌙 Evening</h2>
+<div id="evening"></div>
+</div>
+</section>
+
+<section id="chores" class="page">
+<div class="card">
+<h2>🧹 Chore checklist</h2>
+<p>Choose the week that applies.</p>
+<button id="week1" class="active" onclick="showWeek(1)">Week 1 (even weeks)</button>
+<button id="week2" onclick="showWeek(2)">Week 2 (odd weeks)</button>
+<div id="choreTable"></div>
+</div>
+</section>
+
+<section id="weekly" class="page">
+<div class="card">
+<h2>📅 Weekly jobs</h2>
+<div id="weeklyJobs"></div>
+</div>
+<div class="card">
+<h2>🎀 Weekly activities</h2>
+<div id="activities"></div>
+</div>
+</section>
+
+<section id="core" class="page">
+<div class="card">
+<h2>💪 Core exercises</h2>
+<p>Add your nine exercises here in the order from your exercise list.</p>
+<div id="coreList"></div>
+</div>
+</section>
+
+<script>
+function showPage(id,btn){
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+ document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
+ btn.classList.add('active');
+}
+function makeChecks(id,items){
+ document.getElementById(id).innerHTML=items.map((item,i)=>
+ `<label><input type="checkbox" data-key="${id}-${i}">${item}</label>`
+ ).join('');
+}
+makeChecks('morning',[
+'Wake up – 6:40 am','Get out of bed – 6:50 am','Get dressed – 7:00 am',
+'Take off Tucker’s rug','Make and pack lunch','Eat breakfast',
+'Brush teeth and hair','Pack and check school bag','Leave for school – 7:50 am'
+]);
+makeChecks('afternoon',[
+'Get home – 3:40–3:50 pm','Get changed','Have a snack',
+'Scoop poo in Tucker’s paddock','Homework if needed'
+]);
+makeChecks('evening',[
+'Get ready for bed','Devices away – 9:30 pm','Go to sleep – around 9:50–10:00 pm'
+]);
+
+const chores=[
+ ['Monday',['Recycling','Dog water']],
+ ['Tuesday',['Feed dog','Rubbish','Dishwasher']],
+ ['Wednesday',['Recycling','Dog water']],
+ ['Thursday',['Feed dog','Rubbish','Dishwasher']],
+ ['Friday',['Recycling','Dog water']],
+ ['Saturday',['Feed dog','Rubbish','Dishwasher']],
+ ['Sunday',['Recycling','Dog water']]
+];
+const odd=[
+ ['Monday',['Feed dog','Rubbish','Dishwasher']],
+ ['Tuesday',['Recycling','Dog water']],
+ ['Wednesday',['Feed dog','Rubbish','Dishwasher']],
+ ['Thursday',['Recycling','Dog water']],
+ ['Friday',['Feed dog','Rubbish','Dishwasher']],
+ ['Saturday',['Recycling','Dog water']],
+ ['Sunday',['Feed dog','Rubbish','Dishwasher']]
+];
+let currentWeek=1;
+function showWeek(n){
+ currentWeek=n;
+ document.getElementById('week1').classList.toggle('active',n===1);
+ document.getElementById('week2').classList.toggle('active',n===2);
+ const rows=n===1?chores:odd;
+ const jobs=['Feed dog','Recycling','Rubbish','Dog water','Dishwasher'];
+ let html='<table><tr><th>Day</th>'+jobs.map(j=>`<th>${j}</th>`).join('')+'</tr>';
+ rows.forEach(([day,assigned])=>{
+ html+=`<tr><td>${day}</td>`+jobs.map((job,i)=>
+ `<td>${assigned.includes(job)?`<input type="checkbox" data-key="week${n}-${day}-${i}">`:''}</td>`
+ ).join('')+'</tr>';
+ });
+ document.getElementById('choreTable').innerHTML=html;
+ restoreChecks();
+}
+showWeek(1);
+
+makeChecks('weeklyJobs',[
+'Vacuum my bedroom (weekend)','Change my sheets',
+'Sunday: put washing loads on','Sunday: vacuum and dust the house',
+'Go to Mum’s (every second weekend – odd weeks)'
+]);
+makeChecks('activities',[
+'Tuesday – Dancing','Wednesday – 30-minute walk with Tucker',
+'Thursday – Swimming'
+]);
+makeChecks('coreList',[
+'Exercise 1','Exercise 2','Exercise 3','Exercise 4','Exercise 5',
+'Exercise 6','Exercise 7','Exercise 8','Exercise 9'
+]);
+
+function restoreChecks(){
+ document.querySelectorAll('input[type=checkbox]').forEach(box=>{
+ const key=box.dataset.key;
+ if(key) box.checked=localStorage.getItem(key)==='true';
+ });
+}
+document.addEventListener('change',e=>{
+ if(e.target.type==='checkbox'&&e.target.dataset.key){
+ localStorage.setItem(e.target.dataset.key,e.target.checked);
+ }
+});
+restoreChecks();
+</script>
+</body>
+</html>
